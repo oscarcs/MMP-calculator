@@ -171,7 +171,7 @@ window.onload = function() {
             parseElectorates: function(data) {
                 let obj = {};
 
-                lines = data.split("\n");
+                lines = data.split("\r\n");
 
                 for (key in lines) {
                     let fields = lines[key].split(",");
@@ -180,7 +180,9 @@ window.onload = function() {
                     let electorate = fields[0];
                     let lastName = fields[1];
                     let firstName = fields[2];
-                    let party = fields[3];
+                    let party = this.parties.find(x => x.alias == fields[3]) || fields[3];
+
+                    if (party === "") party = "Independent";
 
                     lastName = this.properCaseName(lastName);
 
