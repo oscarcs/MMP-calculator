@@ -3,6 +3,8 @@ window.onload = function() {
         el: '#vue',
         data: {
             
+            // Data properties:
+
             parties: [
                 {
                     alias: "act",
@@ -42,7 +44,7 @@ window.onload = function() {
                 },
                 {
                     alias: "maori",
-                    name: "Māori Party",
+                    name: "Maori Party",
                     list: null,
                     leaders: [
                         "Te Ururoa Flavell",
@@ -89,6 +91,10 @@ window.onload = function() {
             ],
 
             electorates: {},
+
+            // Search box properties:
+
+            electorateSearchResults: [],
         },
 
         created: function() {
@@ -113,7 +119,6 @@ window.onload = function() {
                     let list = this.responseText;
 
                     let parsedList = app.parseList(list);
-                    // console.log(parsedList);
 
                     let party = app.parties.filter(p => p.alias === alias)[0];
                     party.list = parsedList;
@@ -212,16 +217,20 @@ window.onload = function() {
                     return str;
                 }
                 
-                // Special case for "O'Connor", "O'Sullivan", etc.
+                // Special case for 'O'Connor', 'O'Sullivan', etc.
                 str = capitalizeAfter(str, "O'");
                 
-                // Special case for double-barrel surnames. 
+                // Special case for 'Double-Barrel' surnames. 
                 str = capitalizeAfter(str, "-");
                 
                 // Special case for 'McLovin', etc.
                 str = capitalizeAfter(str, "Mc");
                 
                 return str;
+            },
+
+            searchElectorate: function() {
+                
             }
         }
     });
