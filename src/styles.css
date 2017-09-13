@@ -5,3 +5,24 @@
 .input-narrow {
     width: 100px;
 }
+
+.table td {
+    vertical-align: middle;    
+}
+
+.badge {
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: initial;
+
+    text-align: center;
+    vertical-align: middle;
+
+    line-height: 30px;  
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    margin-right: 1em;
+    
+    font-size: 0.8em;
+}

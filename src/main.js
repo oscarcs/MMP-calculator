@@ -7,91 +7,99 @@ window.onload = function() {
 
             parties: [
                 {
+                    abbreviation: "NAT",
                     alias: "national",
                     name: "National",
                     list: null,
                     leaders: [
                         "Bill English"
                     ],
-                    color: "",
+                    color: "#256fe8",
                     previous: 47.04,
                     current: 0
                 },
                 {
+                    abbreviation: "LAB",
                     alias: "labour",
                     name: "Labour",
                     list: null,
                     leaders: [
                         "Jacinda Ardern"
                     ],
-                    color: "",
+                    color: "#e52b2b",
                     previous: 25.13,
                     current: 0
                 },
                 {
+                    abbreviation: "NZF",
                     alias: "nzf",
                     name: "New Zealand First",
                     list: null,
                     leaders: [
                         "Winston Peters"
                     ],
-                    color: "",
+                    color: "#333333",
                     previous: 8.66,
                     current: 0
                 },
                 {
+                    abbreviation: "GRN",
                     alias: "green",
                     name: "Green",
                     list: null,
                     leaders: [
                         "James Shaw"
                     ],
-                    color: "",
+                    color: "#00c760",
                     previous: 10.70,
                     current: 0
                 },
                 {
+                    abbreviation: "MAO",
                     alias: "maori",
-                    name: "Maori",
+                    name: "Maori Party",
                     list: null,
                     leaders: [
                         "Te Ururoa Flavell",
                         "Marama Fox"
                     ],
-                    color: "",
+                    color: "#4f0e00",
                     previous: 1.32,
                     current: 0
                 },
                 {
+                    abbreviation: "ACT",
                     alias: "act",
                     name: "ACT",
                     list: null,
                     leaders: [
                         "David Seymour"
                     ],
-                    color: "",
+                    color: "#f9df13",
                     previous: 0.69,
                     current: 0 
                 },
                 {
+                    abbreviation: "TOP",
                     alias: "top",
                     name: "The Opportunities Party",
                     list: null,
                     leaders: [
                         "Gareth Morgan"
                     ],
-                    color: "",
+                    color: "#dddddd",
                     previous: 0,
                     current: 0
                 },
                 {
+                    abbreviation: "UF",
                     alias: "uf",
                     name: "United Future",
                     list: null,
                     leaders: [
                         "Damian Light"
                     ],
-                    color: "",
+                    color: "#520082",
                     previous: 0.22,
                     current: 0
                 },
@@ -115,7 +123,6 @@ window.onload = function() {
             this.loadPartyList("act", "data/ACT.csv");
             this.loadPartyList("green", "data/Green.csv");
             this.loadPartyList("labour", "data/Labour.csv");
-            this.loadPartyList("mana", "data/Mana.csv");
             this.loadPartyList("maori", "data/Maori.csv");
             this.loadPartyList("national", "data/National.csv");
             this.loadPartyList("nzf", "data/NZF.csv");
@@ -270,8 +277,23 @@ window.onload = function() {
                         }
                     }
                 }
-
                 return results;
+            },
+            
+            getSwing: function(previous, current) {
+                if (isNaN(previous) || isNaN(current)) {
+                    return 0 + "";
+                }
+
+                let val = Math.round((current - previous) * 100) / 100;
+                return previous < current ? "+" + val : val; 
+            },
+
+            getBadgeStyle: function(party) {
+                return {
+                    color: "white",
+                    backgroundColor: party.color
+                };
             }
         }
     });

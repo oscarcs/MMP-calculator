@@ -34,24 +34,29 @@
                 <table class="table is-fullwidth">
                     <thead>
                         <tr>
-                            <td>Name</td>
-                            <td class="has-text-right">2014</td>
-                            <td class="has-text-right">2017</td>
-                            <td class="has-text-right">Swing</td>
+                            <th>Party</th>
+                            <th class="has-text-right">2014</th>
+                            <th class="has-text-right">2017</th>
+                            <th class="has-text-right">Swing</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="party in parties">
-                            <td>{{party.name}}</td>
+                            <td>
+                                <span class="badge" v-bind:style="getBadgeStyle(party)">
+                                    {{party.abbreviation}}
+                                </span>
+                                {{party.name}}
+                            </td>
                             <td class="has-text-right">{{party.previous}}</td>
                             <td class="has-text-right">                        
                                 <div class="field">                    
                                     <div class="control has-text-right">
-                                        <input class="input input-narrow has-text-right" type="text">
+                                        <input v-model.number="party.current" class="input input-narrow has-text-right" type="text">
                                     </div>
                                 </div>
                             </td>
-                            <td class="has-text-right">+0.0</td>
+                            <td class="has-text-right">{{getSwing(party.previous, party.current)}}</td>
                         </tr>
                     </tbody>
                     <div class="" v-for="party in parties">
@@ -73,9 +78,25 @@
                 </div>            
                 <div v-for="result of electorateSearchResults" class="box">
                     <h5 class="title is-5">{{result.name}}</h5>
-                    <div class="">
-                        Hi!
-                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Party</th> 
+                                <th>Name</th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="candidate in result.candidates">
+                                <td>
+                                    <span class="badge" v-bind:style="getBadgeStyle(candidate.party)">
+                                        {{candidate.party.abbreviation || ""}}
+                                    </span>
+                                    {{candidate.party.name || candidate.party}}
+                                </td>
+                                <td>{{candidate.name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
