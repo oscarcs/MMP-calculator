@@ -7,77 +7,82 @@ window.onload = function() {
 
             parties: [
                 {
-                    alias: "act",
-                    name: "ACT New Zealand",
+                    alias: "national",
+                    name: "National",
                     list: null,
                     leaders: [
-                        "David Seymour"
+                        "Bill English"
                     ],
-                    color: ""
-                },
-                {
-                    alias: "green",
-                    name: "Green Party",
-                    list: null,
-                    leaders: [
-                        "James Shaw"
-                    ],
-                    color: ""
+                    color: "",
+                    previous: 47.04,
+                    current: 0
                 },
                 {
                     alias: "labour",
-                    name: "Labour Party",
+                    name: "Labour",
                     list: null,
                     leaders: [
                         "Jacinda Ardern"
                     ],
-                    color: ""
+                    color: "",
+                    previous: 25.13,
+                    current: 0
                 },
                 {
-                    alias: "mana",
-                    name: "MANA",
+                    alias: "nzf",
+                    name: "New Zealand First",
                     list: null,
                     leaders: [
-                        "Hone Harawira"
+                        "Winston Peters"
                     ],
-                    color: ""
+                    color: "",
+                    previous: 8.66,
+                    current: 0
+                },
+                {
+                    alias: "green",
+                    name: "Green",
+                    list: null,
+                    leaders: [
+                        "James Shaw"
+                    ],
+                    color: "",
+                    previous: 10.70,
+                    current: 0
                 },
                 {
                     alias: "maori",
-                    name: "Maori Party",
+                    name: "Maori",
                     list: null,
                     leaders: [
                         "Te Ururoa Flavell",
                         "Marama Fox"
                     ],
-                    color: ""
+                    color: "",
+                    previous: 1.32,
+                    current: 0
                 },
                 {
-                    alias: "national",
-                    name: "National Party",
+                    alias: "act",
+                    name: "ACT",
                     list: null,
                     leaders: [
-                        "Bill English"
+                        "David Seymour"
                     ],
-                    color: ""
-                },
-                {
-                    alias: "nzf",
-                    name: "New Zealand First Party",
-                    list: null,
-                    leaders: [
-                        "Winston Peters"
-                    ],
-                    color: ""
+                    color: "",
+                    previous: 0.69,
+                    current: 0 
                 },
                 {
                     alias: "top",
-                    name: "The Opportunities Party (TOP)",
+                    name: "The Opportunities Party",
                     list: null,
                     leaders: [
                         "Gareth Morgan"
                     ],
-                    color: ""
+                    color: "",
+                    previous: 0,
+                    current: 0
                 },
                 {
                     alias: "uf",
@@ -86,7 +91,9 @@ window.onload = function() {
                     leaders: [
                         "Damian Light"
                     ],
-                    color: ""
+                    color: "",
+                    previous: 0.22,
+                    current: 0
                 },
             ],
 
@@ -94,7 +101,14 @@ window.onload = function() {
 
             // Search box properties:
 
+            electorateSearch: "",
             electorateSearchResults: [],
+        },
+
+        watch: {
+            electorateSearch: function(query) {
+                this.electorateSearchResults = this.searchElectorate(query);
+            }
         },
 
         created: function() {
@@ -187,7 +201,7 @@ window.onload = function() {
                     let firstName = fields[2];
                     let party = this.parties.find(x => x.alias == fields[3]) || fields[3];
 
-                    if (party === "") party = "Independent";
+                    if (party === '') party = "Independent";
 
                     lastName = this.properCaseName(lastName);
 
@@ -195,7 +209,7 @@ window.onload = function() {
                         obj[electorate] = [];
                     }
                     obj[electorate].push({
-                        name: firstName + " " + lastName,
+                        name: firstName + ' ' + lastName,
                         party: party
                     });
                 }
@@ -229,8 +243,35 @@ window.onload = function() {
                 return str;
             },
 
-            searchElectorate: function() {
-                
+            searchElectorate: function(query) {
+                if (query == '') {
+                    return [];
+                }
+
+                let re = new RegExp('^' + query, 'i');
+                let results = [];
+
+                // Search each word in the names of the electorates
+                for (name in this.electorates) {
+                    let nameParts = name.split(" ");
+                    for (i in nameParts) {
+                        if (nameParts[i].toLowerCase() === "of" ||
+                            nameParts[i].toLowerCase() === "the"
+                        ) {
+                            continue;
+                        }
+
+                        if (re.test(nameParts[i])) {
+                            results.push({
+                                name: name,
+                                candidates: this.electorates[name]
+                            });
+                            break;
+                        }
+                    }
+                }
+
+                return results;
             }
         }
     });

@@ -3,6 +3,7 @@
     <head>
         <title>MMP Calculator</title>
         <link rel="stylesheet" type="text/css" href="bin/bulma.css">
+        <link rel="stylesheet" type="text/css" href="src/styles.css">
         <script src="bin/vue.js"></script>
         <script src="bin/sortable.js"></script>
         <script src="bin/vue-draggable.js"></script>
@@ -10,23 +11,76 @@
     </head>
 
     <body>
+
+    <section class="hero is-orange is-danger">
+        <div class="hero-body">
+            <div class="container">
+            <h1 class="title">
+                MMP Calculator
+            </h1>
+            <h2 class="subtitle">
+                New Zealand General Election, 2017
+            </h2>
+            </div>
+        </div>
+    </section>
+
     <section class="section" id="vue">
     <div class="container is-fluid">
-
-        <div class="columns is-mobile is-centered">
+        <div class="columns is-mobile is-centered">    
         <div class="column is-half is-narrow">
-            <div class="field">
-                <div class="control">
-                    <input class="input" type="text" placeholder="Search for an electorate...">
+            <div class="box">
+                <h3 class="title is-3">Parties</h3>
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td class="has-text-right">2014</td>
+                            <td class="has-text-right">2017</td>
+                            <td class="has-text-right">Swing</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="party in parties">
+                            <td>{{party.name}}</td>
+                            <td class="has-text-right">{{party.previous}}</td>
+                            <td class="has-text-right">                        
+                                <div class="field">                    
+                                    <div class="control has-text-right">
+                                        <input class="input input-narrow has-text-right" type="text">
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="has-text-right">+0.0</td>
+                        </tr>
+                    </tbody>
+                    <div class="" v-for="party in parties">
+   
+                    </div>
+                </table>
+                <h5 class="title is-5">Current Seats</h5>
+                <h5 class="title is-5">Coalition Builder</h5>
+            </div>
+        </div>
+
+        <div class="column is-half is-narrow">
+            <div class="box">
+                <h3 class="title is-3">Electorates</h3>
+                <div class="field">
+                    <div class="control">
+                        <input v-model="electorateSearch" class="input" type="text" placeholder="Search for an electorate...">
+                    </div>
+                </div>            
+                <div v-for="result of electorateSearchResults" class="box">
+                    <h5 class="title is-5">{{result.name}}</h5>
+                    <div class="">
+                        Hi!
+                    </div>
                 </div>
-            </div>            
-        </div>
-        </div>
-
-        <div v-for="result of electorateSearchResults" class="box">
-            Hello!
+            </div>
         </div>
 
+        </div>
     </div>
     </section>
     </body>
