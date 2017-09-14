@@ -43,8 +43,8 @@
                     <tbody>
                         <tr v-for="party in parties">
                             <td>
-                                <span class="badge" v-bind:style="getBadgeStyle(party)">
-                                    {{party.abbreviation}}
+                                <span class="badge" v-bind:style="getBadge(party).style">
+                                    {{getBadge(party).abbreviation}}
                                 </span>
                                 {{party.name}}
                             </td>
@@ -76,24 +76,52 @@
                         <input v-model="electorateSearch" class="input" type="text" placeholder="Search for an electorate...">
                     </div>
                 </div>            
-                <div v-for="result of electorateSearchResults" class="box">
+                <div v-for="(result, j) of electorateSearchResults" class="box">
                     <h5 class="title is-5">{{result.name}}</h5>
-                    <table class="table">
+                    <table class="table is-fullwidth">
                         <thead>
                             <tr>
                                 <th>Party</th> 
                                 <th>Name</th> 
+                                <th>2014</th> 
+                                <th>2017</th> 
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="candidate in result.candidates">
-                                <td>
-                                    <span class="badge" v-bind:style="getBadgeStyle(candidate.party)">
-                                        {{candidate.party.abbreviation || ""}}
+                            <tr v-for="(candidate, i) in result.candidates">
+                                <td class="is-clipped is-nowrap">
+                                    <span class="badge" v-bind:style="getBadge(candidate.party).style">
+                                        {{getBadge(candidate.party).abbreviation}}
                                     </span>
                                     {{candidate.party.name || candidate.party}}
                                 </td>
                                 <td>{{candidate.name}}</td>
+                                <!-- <td>{{result.previous === candidate.name}}</td> -->
+                                <!-- <td>{{result.current === candidate.name}}</td> -->
+
+                                <td>        
+                                    <input 
+                                        disabled
+                                        v-model="result.previous"
+                                        v-bind:value="candidate"
+                                        v-bind:id="candidate.name + '2014'" 
+                                        class="checkbox" 
+                                        v-bind:name="'2014-' + i + '-' + j" 
+                                        type="radio"
+                                    >
+                                    <label v-bind:for="candidate.name + '2014'" class="checkbox-label"></label>
+                                </td>
+                                <td>        
+                                    <input 
+                                        v-model="result.current"
+                                        v-bind:value="candidate"
+                                        v-bind:id="candidate.name + ' 2017'" 
+                                        class="checkbox" 
+                                        v-bind:name="'2017-' + i + '-' + j" 
+                                        type="radio"
+                                    >
+                                    <label v-bind:for="candidate.name + ' 2017'" class="checkbox-label"></label>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

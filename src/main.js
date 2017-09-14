@@ -63,7 +63,7 @@ window.onload = function() {
                         "Te Ururoa Flavell",
                         "Marama Fox"
                     ],
-                    color: "#4f0e00",
+                    color: "#841100",
                     previous: 1.32,
                     current: 0
                 },
@@ -195,7 +195,7 @@ window.onload = function() {
             },
 
             parseElectorates: function(data) {
-                let obj = {};
+                let electorates = [];
 
                 lines = data.split("\r\n");
 
@@ -203,24 +203,39 @@ window.onload = function() {
                     let fields = lines[key].split(",");
                     if (fields.length < 4) continue;
 
-                    let electorate = fields[0];
+                    let name = fields[0];
                     let lastName = fields[1];
                     let firstName = fields[2];
                     let party = this.parties.find(x => x.alias == fields[3]) || fields[3];
+                    let incumbent = fields[4] === "true";
 
                     if (party === '') party = "Independent";
 
                     lastName = this.properCaseName(lastName);
 
-                    if (typeof obj[electorate] === 'undefined') {
-                        obj[electorate] = [];
+                    let electorate = electorates.find(x => x.name === name);
+
+                    if (typeof electorate === 'undefined') {
+                        electorate = {
+                            name: name,
+                            candidates: [],
+                            previous: null,
+                            current: null
+                        };
+                        electorates.push(electorate);
                     }
-                    obj[electorate].push({
+
+                    let candidate = {
                         name: firstName + ' ' + lastName,
                         party: party
-                    });
+                    };
+
+                    electorate.candidates.push(candidate);
+                    if (incumbent) {
+                        electorate.previous = candidate;
+                    }
                 }
-                return obj;
+                return electorates;
             },
 
             properCaseName: function(str) {
@@ -259,20 +274,17 @@ window.onload = function() {
                 let results = [];
 
                 // Search each word in the names of the electorates
-                for (name in this.electorates) {
-                    let nameParts = name.split(" ");
-                    for (i in nameParts) {
-                        if (nameParts[i].toLowerCase() === "of" ||
-                            nameParts[i].toLowerCase() === "the"
+                for (i in this.electorates) {
+                    let nameParts = this.electorates[i].name.split(" ");
+                    for (j in nameParts) {
+                        if (nameParts[j].toLowerCase() === "of" ||
+                            nameParts[j].toLowerCase() === "the"
                         ) {
                             continue;
                         }
 
-                        if (re.test(nameParts[i])) {
-                            results.push({
-                                name: name,
-                                candidates: this.electorates[name]
-                            });
+                        if (re.test(nameParts[j])) {
+                            results.push(this.electorates[i]);
                             break;
                         }
                     }
@@ -289,11 +301,45 @@ window.onload = function() {
                 return previous < current ? "+" + val : val; 
             },
 
-            getBadgeStyle: function(party) {
-                return {
-                    color: "white",
-                    backgroundColor: party.color
-                };
+            getBadge: function(party) {
+                if (typeof party === 'string') {
+                    let abbreviation = ""; 
+                    let color = "";
+
+                    switch (party) {
+                        case "Conservative":
+                            abbreviation = "CON";
+                            color = "#56B3FF"
+                            break;
+
+                        case "Aotearoa Legalise Cannabis Party":
+                            abbreviation = "ALCP";
+                            color = "#88e2a0";
+                            break;
+
+                        case "Democrats for Social Credit":
+                            abbreviation = "DSC";
+                            color = "#005617"
+                            break;
+                    }
+                    return {
+                        abbreviation: abbreviation,
+                        style: {
+                            color: "white",
+                            backgroundColor: color
+                        }
+                    };
+                }
+                else {
+                    return {
+                        abbreviation: party.abbreviation,
+                        style: {
+                            color: "white",
+                            backgroundColor: party.color
+                        }
+                    };
+                }
+                
             }
         }
     });
