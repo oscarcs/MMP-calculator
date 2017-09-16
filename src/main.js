@@ -180,6 +180,33 @@ window.onload = function() {
                 return names[1] + " " + names[0];
             },
 
+            properCaseName: function(str) {
+                str = str.replace(/\w\S*/g, function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+
+                function capitalizeAfter(str, seq) {
+                    if (str.lastIndexOf(seq) > -1) {
+                        let idx = str.lastIndexOf(seq) + seq.length;
+                        str = str.split("");
+                        str[idx] = str[idx].toUpperCase();
+                        str = str.join("");
+                    }
+                    return str;
+                }
+                
+                // Special case for 'O'Connor', 'O'Sullivan', etc.
+                str = capitalizeAfter(str, "O'");
+                
+                // Special case for 'Double-Barrel' surnames. 
+                str = capitalizeAfter(str, "-");
+                
+                // Special case for 'McLovin', etc.
+                str = capitalizeAfter(str, "Mc");
+                
+                return str;
+            },
+
             loadElectorates: function(fileName) {    
                 let app = this;
                 
@@ -233,45 +260,26 @@ window.onload = function() {
                     electorate.candidates.push(candidate);
                     if (incumbent) {
                         electorate.previous = candidate;
+                        electorate.current = candidate;
                     }
                 }
                 return electorates;
             },
 
-            properCaseName: function(str) {
-                str = str.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-
-                function capitalizeAfter(str, seq) {
-                    if (str.lastIndexOf(seq) > -1) {
-                        let idx = str.lastIndexOf(seq) + seq.length;
-                        str = str.split("");
-                        str[idx] = str[idx].toUpperCase();
-                        str = str.join("");
-                    }
-                    return str;
-                }
-                
-                // Special case for 'O'Connor', 'O'Sullivan', etc.
-                str = capitalizeAfter(str, "O'");
-                
-                // Special case for 'Double-Barrel' surnames. 
-                str = capitalizeAfter(str, "-");
-                
-                // Special case for 'McLovin', etc.
-                str = capitalizeAfter(str, "Mc");
-                
-                return str;
-            },
-
             searchElectorate: function(query) {
-                if (query == '') {
-                    return [];
-                }
-
-                let re = new RegExp('^' + query, 'i');
                 let results = [];
+                
+                if (query == '') {
+                    return results;
+                }
+                
+                let re;
+                try {
+                    re = new RegExp('^' + query, 'i');
+                }
+                catch (e) {
+                    return results;
+                }
 
                 // Search each word in the names of the electorates
                 for (i in this.electorates) {
@@ -291,6 +299,51 @@ window.onload = function() {
                 }
                 return results;
             },
+
+            getElectorateTotals() {
+                let data = [];
+
+                for (i in this.electorates) {
+                    if (this.electorates[i].current === null) {
+                        continue;
+                    } 
+
+                    let currentParty = this.electorates[i].current.party;
+                    let existing;
+                    if (typeof currentParty === 'string') {
+                        existing = data.find(x => x.party === currentParty);
+                    }
+                    else {
+                        existing = data.find(x => x.party.name === currentParty.name);
+                    }
+
+                    if (typeof existing === 'undefined') {
+                        data.push({
+                            party: currentParty,
+                            seats: 1
+                        });
+                    }
+                    else {
+                        existing.seats++;
+                    }
+                }
+                
+                /*
+                for (i in data) {
+                    let badge = this.getBadge(data[i].party);
+                    data[i].style = {
+                        backgroundColor: badge.style.backgroundColor,
+                        width: ((data[i].seats / total) * 100) + "%" 
+                    };
+                    data[i].abbreviation = badge.abbreviation;
+                }
+                */
+
+                data.sort((x, y) => y.seats - x.seats);
+
+                console.log(data);                    
+                return data;
+            },
             
             getSwing: function(previous, current) {
                 if (isNaN(previous) || isNaN(current)) {
@@ -301,15 +354,22 @@ window.onload = function() {
                 return previous < current ? "+" + val : val; 
             },
 
-            getBadge: function(party) {
+            getBadge: function(party, useOverride) {
+                
                 if (typeof party === 'string') {
                     let abbreviation = ""; 
                     let color = "";
+                    let override = false;
 
                     switch (party) {
+                        case "MANA":
+                            abbreviation = "MAN";
+                            color = "#ef5151";
+                            break; 
+
                         case "Conservative":
                             abbreviation = "CON";
-                            color = "#56B3FF"
+                            color = "#56B3FF";
                             break;
 
                         case "Aotearoa Legalise Cannabis Party":
@@ -319,10 +379,26 @@ window.onload = function() {
 
                         case "Democrats for Social Credit":
                             abbreviation = "DSC";
-                            color = "#005617"
+                            color = "#005617";
                             break;
+
+                        case "Independent":
+                            abbreviation = "IND";
+                            color = "#878787";
+                            break;
+                            
+                        default:
+                            abbreviation = "";
+                            color = "#878787";
+                            override = true;
                     }
+
+                    if (useOverride && override) {
+                        color = "white"; 
+                    }
+
                     return {
+
                         abbreviation: abbreviation,
                         style: {
                             color: "white",

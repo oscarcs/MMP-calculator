@@ -26,9 +26,19 @@
     width: 30px;
     height: 30px;
     padding: 4px;
-    margin-right: 1em;
     
     font-size: 0.8em;
+}
+
+.badge-unit {
+    margin-right: 0.7em;
+    display: inline-block;
+}
+
+.badge-row {
+    padding-bottom: 20px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .checkbox {
