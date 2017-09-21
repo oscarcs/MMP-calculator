@@ -3,7 +3,7 @@ window.calculateMMP = function(parties, electorates) {
 
     function getValidParties(parties, electorates) {
         let total = parties.reduce((acc, x) => acc += x.votes, 0);
-    
+
         let numQuotas = 120;
         let validParties = [];
         
@@ -11,7 +11,7 @@ window.calculateMMP = function(parties, electorates) {
             let electorateSeats = electorates.find(x => x.name === parties[i].name);
     
             if (parties[i].votes >= total * 0.05 ||
-                electorateSeats.seats > 0
+                (typeof electorateSeats !== 'undefined' && electorateSeats.seats > 0)
             ) {
                 validParties.push(parties[i]);
             }

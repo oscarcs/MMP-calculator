@@ -108,9 +108,11 @@ window.onload = function() {
             electorates: {},
 
             // Search box properties:
-
             electorateSearch: "",
             electorateSearchResults: [],
+
+            // Seat distributions properties:
+            seats: {},
         },
 
         watch: {
@@ -129,10 +131,46 @@ window.onload = function() {
             this.loadPartyList("top", "data/TOP.csv");
             this.loadPartyList("uf", "data/UF.csv");
 
-            this.loadElectorates("data/electorates.csv")
+            this.loadElectorates("data/electorates.csv");
+
+            for (let i in this.parties) {
+                this.parties[i].current = this.parties[i].previous;
+            }
+
+            this.loadData();
         },
 
         methods: {
+
+            saveData: function() {
+                console.log("Saving data...");
+
+                let electorates = JSON.stringify(this.electorates);
+                let parties = JSON.stringify(this.parties);
+
+                localStorage.setItem("electorates", electorates);
+                localStorage.setItem("parties", parties);
+            },
+
+            loadData: function() {
+                console.log("Loading data...");
+
+                let electorates = localStorage.getItem("electorates"); 
+                let parties = localStorage.getItem("parties"); 
+
+                console.log(electorates, parties);
+                
+                if (electorates !== null && parties !== null) {
+                    this.electorates = JSON.parse(electorates);
+                    this.parties = JSON.parse(parties);
+                }
+            },
+
+            resetData: function() {
+                localStorage.removeItem("electorates");
+                localStorage.removeItem("parties");
+            },
+
             loadPartyList: function(alias, fileName) {    
                 let app = this;
                 
@@ -327,21 +365,9 @@ window.onload = function() {
                         existing.seats++;
                     }
                 }
-                
-                /*
-                for (i in data) {
-                    let badge = this.getBadge(data[i].party);
-                    data[i].style = {
-                        backgroundColor: badge.style.backgroundColor,
-                        width: ((data[i].seats / total) * 100) + "%" 
-                    };
-                    data[i].abbreviation = badge.abbreviation;
-                }
-                */
 
                 data.sort((x, y) => y.seats - x.seats);
-
-                console.log(data);                    
+                    
                 return data;
             },
             
@@ -415,8 +441,56 @@ window.onload = function() {
                         }
                     };
                 }
+            },
+
+            calculateSeats: function() {
+                let parties = [];
+                let electorates = [];
                 
-            }
+                let getParty = x => (x.current.party.name || x.current.party);
+
+                for (let i in this.parties) {
+                    parties.push({
+                        name: this.parties[i].name,
+                        votes: this.parties[i].current * 100, 
+                    });
+                }
+
+                for (let i in this.electorates) {
+                    var electorateParty = electorates.find(x => x.name === getParty(this.electorates[i]));
+
+                    if (typeof electorateParty === 'undefined') {
+                        electorates.push({
+                            name: getParty(this.electorates[i]),
+                            seats: 1
+                        });
+                    }
+                    else {
+                        electorateParty.seats++;
+                    }
+                }
+
+                let parliament = calculateMMP(parties, electorates);
+
+                let seats = [];
+                for (let i in parliament.parties) {
+                    let foundParty = this.parties.find(x => x.name === parliament.parties[i].name);
+                    let party = typeof foundParty !== 'undefined' ? foundParty : parliament.parties[i].name;
+                    let badge = this.getBadge(party);
+
+                    seats.push({
+                        badge: badge,
+                        seats: parliament.parties[i].quota,
+                        party: party
+                    });
+                }
+
+                seats.sort((x, y) => y.seats - x.seats);                
+
+                this.seats = seats;
+                return seats;
+            },
+
         }
     });
 
