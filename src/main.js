@@ -169,6 +169,7 @@ window.onload = function() {
             resetData: function() {
                 localStorage.removeItem("electorates");
                 localStorage.removeItem("parties");
+                location.reload();
             },
 
             loadPartyList: function(alias, fileName) {    
