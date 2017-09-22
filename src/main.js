@@ -178,8 +178,6 @@ window.onload = function() {
 
                     let party = app.parties.filter(p => p.alias === alias)[0];
                     party.list = parsedList;
-
-                    console.log(party.list);
                 }
             
                 let request = new XMLHttpRequest();
@@ -467,7 +465,6 @@ window.onload = function() {
                     var electorateParty = electorates.find(x => x.name === getParty(this.electorates[i]));
 
                     if (typeof electorateParty === 'undefined') {
-                        console.log(this.electorates, this.electorates[i]);
                         electorates.push({
                             name: getParty(this.electorates[i]),
                             seats: 1
