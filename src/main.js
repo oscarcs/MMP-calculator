@@ -136,8 +136,6 @@ window.onload = function() {
             for (let i in this.parties) {
                 this.parties[i].current = this.parties[i].previous;
             }
-
-            this.loadData();
         },
 
         methods: {
@@ -157,8 +155,6 @@ window.onload = function() {
 
                 let electorates = localStorage.getItem("electorates"); 
                 let parties = localStorage.getItem("parties"); 
-
-                console.log(electorates, parties);
                 
                 if (electorates !== null && parties !== null) {
                     this.electorates = JSON.parse(electorates);
@@ -182,6 +178,26 @@ window.onload = function() {
 
                     let party = app.parties.filter(p => p.alias === alias)[0];
                     party.list = parsedList;
+                }
+            
+                let request = new XMLHttpRequest();
+                request.addEventListener("load", listener);
+                request.open("GET", fileName);
+                request.send();
+            },
+
+            loadElectorates: function(fileName) {    
+                let app = this;
+                
+                function listener() {
+                    let data = this.responseText;
+                    app.electorates = app.parseElectorates(data);
+
+                    // Load saved data.
+                    app.loadData();
+
+                    // Set a timeout to periodically load data.
+                    setInterval(() => app.saveData(), 10000);
                 }
             
                 let request = new XMLHttpRequest();
@@ -244,20 +260,6 @@ window.onload = function() {
                 str = capitalizeAfter(str, "Mc");
                 
                 return str;
-            },
-
-            loadElectorates: function(fileName) {    
-                let app = this;
-                
-                function listener() {
-                    let data = this.responseText;
-                    app.electorates = app.parseElectorates(data);
-                }
-            
-                let request = new XMLHttpRequest();
-                request.addEventListener("load", listener);
-                request.open("GET", fileName);
-                request.send();
             },
 
             parseElectorates: function(data) {
@@ -453,7 +455,7 @@ window.onload = function() {
                 for (let i in this.parties) {
                     parties.push({
                         name: this.parties[i].name,
-                        votes: this.parties[i].current * 100, 
+                        votes: Math.round(this.parties[i].current * 10000) / 100, 
                     });
                 }
 
@@ -469,6 +471,14 @@ window.onload = function() {
                     else {
                         electorateParty.seats++;
                     }
+                }
+
+                let total = this.parties.reduce((acc, x) => acc += x.current, 0);
+                if (total < 100) {
+                    parties.push({
+                        name: "Other",
+                        votes: Math.round((100 - total) * 10000)/100
+                    })
                 }
 
                 let parliament = calculateMMP(parties, electorates);
