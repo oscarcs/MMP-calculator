@@ -213,6 +213,7 @@ window.onload = function() {
             parseList: function(list) {
                 let obj = {};
 
+                list = list.replace(/\r\n/g, "\n");
                 lines = list.split("\n");
 
                 for (key in lines) {
@@ -269,7 +270,8 @@ window.onload = function() {
             parseElectorates: function(data) {
                 let electorates = [];
 
-                lines = data.split("\r\n");
+                data = data.replace(/\r\n/g, "\n");
+                lines = data.split("\n");
 
                 for (key in lines) {
                     let fields = lines[key].split(",");
