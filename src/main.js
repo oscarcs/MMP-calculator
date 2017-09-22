@@ -106,6 +106,7 @@ window.onload = function() {
             ],
 
             electorates: {},
+            electoratesLoaded: false,
 
             // Search box properties:
             electorateSearch: "",
@@ -196,6 +197,8 @@ window.onload = function() {
                     app.electorates = app.parseElectorates(data);
 
                     console.log(app.electorates);
+
+                    this.electoratesLoaded = true;
 
                     // Load saved data.
                     app.loadData();
@@ -455,6 +458,10 @@ window.onload = function() {
             calculateSeats: function() {
                 let parties = [];
                 let electorates = [];
+
+                if (!this.electoratesLoaded) {
+                    return [];
+                }
                 
                 let getParty = x => (x.current.party.name || x.current.party);
 
