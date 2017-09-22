@@ -106,7 +106,6 @@ window.onload = function() {
             ],
 
             electorates: {},
-            electoratesLoaded: false,
 
             // Search box properties:
             electorateSearch: "",
@@ -195,11 +194,7 @@ window.onload = function() {
                 function listener() {
                     let data = this.responseText;
                     app.electorates = app.parseElectorates(data);
-
-                    console.log(app.electorates);
-
-                    app.electoratesLoaded = true;
-
+                    
                     // Load saved data.
                     app.loadData();
 
@@ -459,10 +454,6 @@ window.onload = function() {
                 let parties = [];
                 let electorates = [];
 
-                if (!this.electoratesLoaded) {
-                    return [];
-                }
-                
                 let getParty = x => (x.current.party.name || x.current.party);
 
                 for (let i in this.parties) {
@@ -476,6 +467,7 @@ window.onload = function() {
                     var electorateParty = electorates.find(x => x.name === getParty(this.electorates[i]));
 
                     if (typeof electorateParty === 'undefined') {
+                        console.log(this.electorates, this.electorates[i]);
                         electorates.push({
                             name: getParty(this.electorates[i]),
                             seats: 1
