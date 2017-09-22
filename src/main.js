@@ -178,6 +178,8 @@ window.onload = function() {
 
                     let party = app.parties.filter(p => p.alias === alias)[0];
                     party.list = parsedList;
+
+                    console.log(party.list);
                 }
             
                 let request = new XMLHttpRequest();
@@ -192,6 +194,8 @@ window.onload = function() {
                 function listener() {
                     let data = this.responseText;
                     app.electorates = app.parseElectorates(data);
+
+                    console.log(app.electorates);
 
                     // Load saved data.
                     app.loadData();
@@ -473,15 +477,7 @@ window.onload = function() {
                     }
                 }
 
-                let total = this.parties.reduce((acc, x) => acc += x.current, 0);
-                if (total < 100) {
-                    parties.push({
-                        name: "Other",
-                        votes: Math.round((100 - total) * 10000)/100
-                    })
-                }
-
-                let parliament = calculateMMP(parties, electorates);
+                let parliament = calculateMMP(parties, electorates, 10000);
 
                 let seats = [];
                 for (let i in parliament.parties) {

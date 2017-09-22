@@ -1,8 +1,10 @@
 "use strict";
-window.calculateMMP = function(parties, electorates) {
+window.calculateMMP = function(parties, electorates, total) {
 
-    function getValidParties(parties, electorates) {
-        let total = parties.reduce((acc, x) => acc += x.votes, 0);
+    function getValidParties(parties, electorates, total) {
+        if (typeof total === "undefined") {
+            total = parties.reduce((acc, x) => acc += x.votes, 0);
+        }
 
         let numQuotas = 120;
         let validParties = [];
@@ -83,5 +85,5 @@ window.calculateMMP = function(parties, electorates) {
         return parliament;
     }
 
-    return getValidParties(parties, electorates);
+    return getValidParties(parties, electorates, total);
 }
