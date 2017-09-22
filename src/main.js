@@ -496,6 +496,29 @@ window.onload = function() {
                 return seats;
             },
 
+            calculateMPs: function() {
+                return this.seats.map(p => {
+                    var electorateMPs = this.electorates
+                        .filter(e => e.current.party.abbreviation == p.party.abbreviation)
+                        .map(e => {
+                            return {
+                                electorate: e,
+                                mp: e.current.name
+                            }
+                        });
+
+                    var listMPs = Object.values(p.party.list)
+                        .filter(c => !electorateMPs.find(e => e.mp == c))
+                        .slice(0, p.seats - electorateMPs.length);
+
+                    return {
+                        party: p.party,
+                        electorateMPs,
+                        listMPs
+                    };
+                });
+            }
+
         }
     });
 
