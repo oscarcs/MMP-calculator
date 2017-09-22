@@ -198,7 +198,7 @@ window.onload = function() {
 
                     console.log(app.electorates);
 
-                    this.electoratesLoaded = true;
+                    app.electoratesLoaded = true;
 
                     // Load saved data.
                     app.loadData();
