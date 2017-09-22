@@ -43,7 +43,16 @@
                         </div>
                     </div>
                 </div>
-                
+
+                <table class="table is-fullwidth">
+                    <tr>
+                        <td>Total Seats:</td>
+                        <td>{{totalSeats}} ({{overhangSeats}} {{overhangSeats === 1 ? "overhang" : "overhangs"}})</td>
+                        <td>Seats For Majority:</td>
+                        <td>{{Math.floor(totalSeats / 2) + 1}}</td>
+                    </tr>
+                </table>
+
                 <table class="table is-fullwidth">
                     <thead>
                         <tr>
