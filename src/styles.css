@@ -35,6 +35,13 @@
     display: inline-block;
 }
 
+@media screen and (max-width: 768px) {
+    .party-name>.badge-unit {
+        margin-right: 0em;
+    }    
+}
+    
+
 .badge-row {
     padding-bottom: 20px;
     text-align: center;

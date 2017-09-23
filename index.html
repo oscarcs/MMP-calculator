@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=0.7">
+            
         <title>MMP Calculator</title>
         <link rel="stylesheet" type="text/css" href="bin/bulma.css">
         <link rel="stylesheet" type="text/css" href="src/styles.css">
@@ -28,7 +30,7 @@
 
     <section class="section" id="vue">
     <div class="container is-fluid">
-        <div class="columns is-mobile is-centered">    
+        <div class="columns is-centered">    
         <div class="column is-half is-narrow">
             <div class="box">
                 <h3 class="title is-3">Parties</h3>
@@ -44,16 +46,18 @@
                     </div>
                 </div>
 
-                <table class="table is-fullwidth">
-                    <tr>
-                        <td>Total Seats:</td>
-                        <td>{{totalSeats}} ({{overhangSeats}} {{overhangSeats === 1 ? "overhang" : "overhangs"}})</td>
-                        <td>Seats For Majority:</td>
-                        <td>{{Math.floor(totalSeats / 2) + 1}}</td>
-                    </tr>
-                </table>
+                <div class="columns is-centered">    
+                    <div class="column is-half is-narrow has-text-centered">
+                        Total Seats: {{totalSeats}} ({{overhangSeats}} 
+                        {{overhangSeats === 1 ? "overhang" : "overhangs"}})    
+                    </div>
+                    <div class="column is-half is-narrow has-text-centered">
+                        Seats For Majority:
+                        {{Math.floor(totalSeats / 2) + 1}}
+                    </div>
+                </div>
 
-                <table class="table is-fullwidth">
+                <table class="table is-fullwidth">  
                     <thead>
                         <tr>
                             <th>Party</th>
@@ -70,7 +74,9 @@
                                         {{getBadge(party).abbreviation}}
                                     </span>
                                 </div>
-                                {{party.name}}
+                                <span v-if="matchMedia('(min-width: 769px)').matches">
+                                    {{party.name}}
+                                </span>
                             </td>
                             <td class="has-text-right">{{party.previous}}</td>
                             <td class="has-text-right">                        
@@ -134,13 +140,15 @@
                         </thead>
                         <tbody>
                             <tr v-for="(candidate, i) in result.candidates">
-                                <td class="is-clipped is-nowrap">
+                                <td class="party-name">
                                     <div class="badge-unit">
                                         <span class="badge" v-bind:style="getBadge(candidate.party, true).style">
                                             {{getBadge(candidate.party).abbreviation}}
                                         </span>
                                     </div>
-                                    {{candidate.party.name || candidate.party}}
+                                    <span v-if="matchMedia('(min-width: 769px)').matches">
+                                        {{candidate.party.name || candidate.party}}
+                                    </span>
                                 </td>
                                 <td>{{candidate.name}}</td>
                                 <td>        
@@ -171,12 +179,42 @@
                     </table>
                 </div>
             </div>
-        </div>
+
+            <div class="box">                
+                <h3 class="title is-3">MPs 
+                    <button class="button is-danger" v-on:click="clearMPs()">Hide</button>
+                    <button class="button is-info" v-on:click="calculateMPs()">Refresh</button>
+                </h3>
+                
+                <article v-for="party in MPs" class="message">
+                    
+                    <div class="message-header" v-bind:style="getBadge(party.party).style">
+                        <p>{{party.party.name}}</p>
+                    </div>
+
+                    <div class="message-body">
+                        <div>
+                            <strong>Electorate: </strong><br />
+                            {{party.electorateMPs.map(e => e.mp).join(", ")}}
+                        </div>
+                        <div>
+                            <strong>List: </strong><br />
+                            {{party.listMPs.join(", ")}}
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
         </div>
 
-        <button class="button is-danger" v-on:click="resetData()">Reset</button>
-        <button class="button is-info" v-on:click="loadData()">Load</button>
-        <button class="button is-success" v-on:click="saveData()">Save</button>
+        <div style="margin-top: 1em;">
+            <button class="button is-danger" v-on:click="resetData()">Reset</button>
+            <button class="button is-info" v-on:click="loadData()">Load</button>
+            <button class="button is-success" v-on:click="saveData()">Save</button>
+        </div>
+
+        </div> <!-- container -->
+        
     </div>
     </section>
     </body>

@@ -107,6 +107,8 @@ window.onload = function() {
 
             electorates: {},
 
+            MPs: [],
+
             // Search box properties:
             electorateSearch: "",
             electorateSearchResults: [],
@@ -115,6 +117,8 @@ window.onload = function() {
             seats: {},
             totalSeats: 0,
             overhangSeats: 0,
+
+            matchMedia: x => window.matchMedia(x),
         },
 
         watch: {
@@ -502,7 +506,7 @@ window.onload = function() {
             },
 
             calculateMPs: function() {
-                let x = this.seats.map(p => {
+                this.MPs = this.seats.map(p => {
                     var electorateMPs = this.electorates
                         .filter(e => e.current.party.abbreviation == p.party.abbreviation)
                         .map(e => {
@@ -522,9 +526,10 @@ window.onload = function() {
                         listMPs
                     };
                 });
+            },
 
-                return x;
-                console.log(x);
+            clearMPs: function() {
+                this.MPs = [];
             }
 
         }
